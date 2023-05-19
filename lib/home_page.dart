@@ -1,3 +1,4 @@
+import 'package:deposito/src/controllers/home_controler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -15,6 +16,19 @@ class _HomePage extends State<HomePage> {
   final nivel = TextEditingController();
   final apartamento = TextEditingController();
   final ean = TextEditingController();
+  final desci = TextEditingController();
+
+  HomeControler home = HomeControler();
+
+  @override
+  void dispose() {
+    super.dispose();
+    rua.dispose();
+    bloco.dispose();
+    nivel.dispose();
+    apartamento.dispose();
+    ean.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +92,9 @@ class _HomePage extends State<HomePage> {
               Row(
                 children: [
                   Expanded(
-                    flex: 1,
+                    flex: 4,
                     child: TextFormField(
+                      controller: desci,
                       decoration: const InputDecoration(
                         label: Text('Descrição'),
                         border: OutlineInputBorder(),
@@ -159,8 +174,12 @@ class _HomePage extends State<HomePage> {
       if (_scanBarcode.length == 8) {
         barcodeDeposito(_scanBarcode);
       }
-      if (_scanBarcode.length > 8) {
+      if (_scanBarcode.length >= 9) {
         barcodeProduto(_scanBarcode);
+        var teste = await home.mostrarDescicao(_scanBarcode);
+        setState(() {
+          desci.text = teste;
+        });
       }
     } else {}
   }
