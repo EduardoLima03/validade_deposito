@@ -76,11 +76,11 @@ class _HomePage extends State<HomePage> {
                     ),
                   ),
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: TextFormField(
                       controller: apartamento,
                       decoration: const InputDecoration(
-                        label: Text('Apartamneto'),
+                        label: Text('Apartamento'),
                       ),
                     ),
                   ),
