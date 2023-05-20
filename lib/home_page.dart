@@ -134,7 +134,7 @@ class _HomePage extends State<HomePage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  label: Text('Valiade'),
+                  label: Text('Validade'),
                   border: OutlineInputBorder(),
                 ),
               ),
