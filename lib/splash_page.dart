@@ -1,15 +1,12 @@
+import 'package:deposito/src/views/splash_scree/splash_laptop.dart';
+import 'package:deposito/src/views/splash_scree/splash_tablet.dart';
 import 'package:flutter/material.dart';
 
 import 'src/views/splash_scree/splash_smartphone.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
-  @override
-  State<SplashPage> createState() => _SplashPage();
-}
-
-class _SplashPage extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,9 +15,9 @@ class _SplashPage extends State<SplashPage> {
         if (constraints.maxWidth <= 580) {
           return getSplashSmartphone();
         } else if (constraints.maxWidth > 580 && constraints.maxWidth <= 800) {
-          return Container();
+          return getSplashTable();
         } else {
-          return Container();
+          return getSplashLaptop();
         }
       }),
     );
