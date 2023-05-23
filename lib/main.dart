@@ -1,7 +1,9 @@
 import 'package:deposito/home_page.dart';
+import 'package:deposito/splash_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  runApp(const SplashPage());
   runApp(const MyApp());
 }
 
