@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:deposito/src/controllers/home_controler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,11 +37,17 @@ class _HomePage extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Deposito"),
-        actions: [
-          IconButton(
-              onPressed: scanBarcodeNormal,
-              icon: const Icon(Icons.barcode_reader)),
-        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          //crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(icon:const  Icon(Icons.qr_code_scanner), onPressed: scanQR),
+            const Spacer(flex: 1),
+            IconButton(icon: const Icon(Icons.barcode_reader), onPressed: scanBarcodeNormal),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -89,26 +97,12 @@ class _HomePage extends State<HomePage> {
               const SizedBox(
                 height: 8.0,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: TextFormField(
-                      controller: desci,
-                      decoration: const InputDecoration(
-                        label: Text('Descrição'),
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: IconButton(
-                        onPressed: scanBarcodeNormal,
-                        icon: const Icon(Icons.barcode_reader),
-                        color: Colors.greenAccent,
-                      ))
-                ],
+              TextFormField(
+                controller: desci,
+                decoration: const InputDecoration(
+                  label: Text('Descrição'),
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(
                 height: 8.0,
@@ -138,6 +132,8 @@ class _HomePage extends State<HomePage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 10,),
+              ElevatedButton(onPressed: null, child: Text('Registrar'),),
             ],
           ),
         ),
@@ -169,33 +165,49 @@ class _HomePage extends State<HomePage> {
     await mostraDesc();
   }
 
+  Future<void> scanQR() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
+    converterQrcodeEmJson();
+  }
+
   mostraDesc() async {
     if (_scanBarcode != 'Unknown') {
-      if (_scanBarcode.length == 8) {
-        barcodeDeposito(_scanBarcode);
-      }
-      if (_scanBarcode.length >= 9) {
         barcodeProduto(_scanBarcode);
         var teste = await home.mostrarDescicao(_scanBarcode);
         setState(() {
           desci.text = teste;
         });
-      }
     } else {}
   }
 
-  void barcodeDeposito(var barra) {
-    var rua1 = _scanBarcode[0];
-    var bloco1 = _scanBarcode[1];
-    var nivel1 = _scanBarcode[2];
-    var ap1 = _scanBarcode[3];
+  converterQrcodeEmJson() {
+    if (_scanBarcode != 'Unknown') {
+      Map<String, dynamic> map = jsonDecode(_scanBarcode);
+      setState(() {
+        rua.text = map['rua'].toString();
+        apartamento.text = map['apartamento'].toString();
+        bloco.text = map['bloco'].toString();
+        nivel.text = map['nivel'].toString();
+      });
 
-    setState(() {
-      rua.text = rua1;
-      bloco.text = bloco1;
-      nivel.text = nivel1;
-      apartamento.text = ap1;
-    });
+    }
   }
 
   void barcodeProduto(var barras) {
